@@ -14,7 +14,7 @@ import axios from 'axios';
 import 'brace/mode/typescript';
 import 'brace/theme/kuroir';
 
-this.state = {
+state = {
     code: `const onLoad = (editor) => {\n\tconsole.log("i've loaded");\n};`,
     isError: false, 
     email: ''
@@ -62,7 +62,9 @@ const Ace = (props) => {
 
     const onTextFIeldChange = (e) => {
         console.log(e.target.value);
-        if (!e.target.value.includes('@') || !e.target.value.includes('.')) this.state.isError = true;
+        this.setState({
+            [email]: event.target.value,
+          });
     }
 
     return (
