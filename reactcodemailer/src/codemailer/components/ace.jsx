@@ -13,8 +13,9 @@ import axios from 'axios';
 
 import 'brace/mode/typescript';
 import 'brace/theme/kuroir';
+import { stat } from 'fs';
 
-state = {
+this.state = {
     code: `const onLoad = (editor) => {\n\tconsole.log("i've loaded");\n};`,
     isError: false, 
     email: ''
@@ -61,10 +62,10 @@ const Ace = (props) => {
     }
 
     const onTextFIeldChange = (e) => {
-        console.log(e.target.value);
         this.setState({
             [email]: event.target.value,
           });
+        console.log(this.state.email);
     }
 
     return (
