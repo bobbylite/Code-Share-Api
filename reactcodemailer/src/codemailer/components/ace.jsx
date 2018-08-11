@@ -114,7 +114,7 @@ const Ace = (props) => {
 const postCodeEmail = () => {
     axios.post('http://bobbysapps.com:8080/', {
       code: this.state.code, 
-      toEmail: this.props.email
+      toEmail: this.state.email
     })
     .then(function (response) {
       console.log(response);
