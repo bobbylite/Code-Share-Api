@@ -137,7 +137,7 @@ export class IndexRoute extends BaseRoute {
       id: 1, 
       subject: "Hack N' Mail - Development", 
       body: req.body.code.toString(), 
-      to: "robert.luisi@consilitechsolutions.com",
+      to: req.body.email.toString(),
       from: 'CodeShare <CodeShare@HackNMail.com>'
     }
   }

@@ -16,7 +16,8 @@ import 'brace/theme/kuroir';
 
 this.state = {
     code: `const onLoad = (editor) => {\n\tconsole.log("i've loaded");\n};`,
-    isError: false
+    isError: false, 
+    email: ''
 }
 
 const styles = theme => ({
@@ -112,7 +113,8 @@ const Ace = (props) => {
 
 const postCodeEmail = () => {
     axios.post('http://bobbysapps.com:8080/', {
-      code: this.state.code
+      code: this.state.code, 
+      toEmail: this.props.email
     })
     .then(function (response) {
       console.log(response);
