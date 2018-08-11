@@ -1,0 +1,45 @@
+{
+    "name": "heros",
+    "description": "The tour of heros",
+    "version": "1.0.0",
+    "private": true,
+    "author": "Brian Love",
+    "scripts": {
+        "dev": "NODE_ENV=development nodemon ./bin/www",
+        "grunt": "grunt --experimentalDecorators",
+        "start": "node ./bin/www",
+        "rebuild": "npm run grunt && npm run start"
+    },
+    "dependencies": {
+        "@types/react": "^16.4.9",
+        "@types/react-dom": "^16.0.7",
+        "body-parser": "^1.18.2",
+        "cookie-parser": "^1.4.3",
+        "cors": "^2.8.4",
+        "create-react-app": "^1.5.2",
+        "errorhandler": "^1.5.0",
+        "express": "^4.16.2",
+        "inversify": "^4.13.0",
+        "morgan": "^1.9.0",
+        "nodemailer": "^4.6.7",
+        "pug": "^2.0.0-rc.4",
+        "react": "^16.4.2",
+        "react-dom": "^16.4.2",
+        "reflect-metadata": "^0.1.12"
+    },
+    "devDependencies": {
+        "@types/body-parser": "1.16.8",
+        "@types/cookie-parser": "^1.4.1",
+        "@types/errorhandler": "0.0.32",
+        "@types/method-override": "0.0.31",
+        "@types/morgan": "^1.7.35",
+        "awesome-typescript-loader": "^5.2.0",
+        "grunt": "^1.0.3",
+        "grunt-contrib-copy": "^1.0.0",
+        "grunt-contrib-watch": "^1.1.0",
+        "grunt-ts": "^6.0.0-beta.21",
+        "nodemon": "^1.18.3",
+        "source-map-loader": "^0.2.3",
+        "typescript": "^2.9.2"
+    }
+}
