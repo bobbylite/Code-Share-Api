@@ -2,133 +2,212 @@ import React from 'react';
 import '../css/ace.css';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import brace from 'brace';
+import axios from 'axios';
 import AceEditor from 'react-ace';
-
-
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import axios from 'axios';
+import Snackbar from '@material-ui/core/Snackbar';
+import IconButton from '@material-ui/core/IconButton';
+import Slide from '@material-ui/core/Slide';
 
 import 'brace/mode/typescript';
 import 'brace/theme/kuroir';
-import { stat } from 'fs';
 
-this.state = {
-    code: `const onLoad = (editor) => {\n\tconsole.log("i've loaded");\n};`,
-    isError: false, 
-    email: ''
+function TransitionLeft(props) {
+    return <Slide {...props} direction="left" />;
 }
 
-const styles = theme => ({
-root: {
-    ...theme.mixins.gutters(),
-    paddingTop: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 2,
-},
-});
+function TransitionUp(props) {
+    return <Slide {...props} direction="up" />;
+}
 
-const theme = createMuiTheme({
-    palette: {
-    primary: {
-        main: '#4fc3f7'
-    },
-    secondary: {
-        main: '#81c784',
-    },
-    },
-});
+function TransitionRight(props) {
+    return <Slide {...props} direction="right" />;
+}
 
-const Ace = (props) => {
-    const { classes } = props;
+function TransitionDown(props) {
+    return <Slide {...props} direction="down" />;
+}
 
-    const onMailClick = (e) => {
-        console.log(e);
-        postCodeEmail();
-      }
-      
-    const onTwitterClick = (e) => {
-      
-      }
+class Ace extends React.Component {
 
-    const onChange = (newValue) => {
-        this.state.code = newValue;
-        console.log(this.state.code);
-    }
-    
-    const onLoad = (params) => {
-        console.log(params);
-    }
+    styles = theme => ({
+        root: {
+            ...theme.mixins.gutters(),
+            paddingTop: theme.spacing.unit * 2,
+            paddingBottom: theme.spacing.unit * 2,
+        },
+    });
 
-    const onTextFIeldChange = (e) => {
+    theme = createMuiTheme({
+        palette: {
+            primary: {
+                main: '#4fc3f7'
+            },
+            secondary: {
+                main: '#81c784',
+            },
+        },
+    });
+
+    state = {
+        code: `const onLoad = (editor) => {\n\tconsole.log("i've loaded");\n};`,
+        isError: false,
+        email: '',
+        open: false,
+        openError: false,
+        transition: null
+    };
+
+    handleChange = name => event => {
         this.setState({
-            [email]: event.target.value,
-          });
+            [name]: event.target.value,
+        });
+    };
+
+    postCodeEmail = () => {
+        if (this.state.isError) {
+
+            return;
+        }
+        axios.post('http://bobbysapps.com:8080/', {
+            code: this.state.code,
+            toEmail: this.state.email
+        })
+            .then(function (response) {
+                console.log(response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+    onMailClick = (e) => {
+        console.log(this.state.isError);
+        if (!this.state.isError) this.postCodeEmail();
+        if (this.state.isError) {
+            this.handleErrorSnackBar(TransitionUp);
+        }
+    }
+
+    handleErrorSnackBar = Transition => () => {
+        this.setState({ ["openError"]: true, ["transition"]: TransitionUp });
+    }
+
+    onTextFIeldChange = (event) => {
+        let status;
+        if (!event.target.value.includes('\@') || !event.target.value.includes('.')) status = true;
+        this.setState({
+            ["email"]: event.target.value,
+            ["isError"]: status
+        });
         console.log(this.state.email);
     }
 
-    return (
-        <MuiThemeProvider theme={theme}>
-            <div className="ace">
-            <br/>
-            <AceEditor
-                mode="typescript"
-                theme="kuroir"
-                name="blah2"
-                onLoad={onLoad}
-                onChange={onChange}
-                fontSize={14}
-                showPrintMargin={true}
-                showGutter={true}
-                highlightActiveLine={true}
-                value={this.state.code}
-                setOptions={{
-                enableBasicAutocompletion: true,
-                enableLiveAutocompletion: true,
-                enableSnippets: false,
-                showLineNumbers: true,
-                tabSize: 2,
-                }}/>
-                <br/>
-                <TextField
-                id="full-width"
-                label="Send to:"
-                InputLabelProps={{
-                    shrink: true,
-                }}
-                placeholder="codeshare@example.com"
-                helperText="Happy Hacking!"
-                fullWidth
-                margin="normal"
-                onChange={onTextFIeldChange}
-                error={this.state.isError}/>
-            </div>
-                <Button 
-                color="secondary" 
-                onClick={onMailClick}
-                className={classes.button}>
+    render() {
+        const { classes } = this.props;
+
+        const onChange = (newValue) => {
+            this.state.code = newValue;
+            console.log(this.state.code);
+        }
+
+        const onLoad = (params) => {
+            console.log(params);
+        }
+
+        return (
+            <MuiThemeProvider theme={this.theme}>
+                <div className="ace">
+                    <br />
+                    <AceEditor
+                        mode="typescript"
+                        theme="kuroir"
+                        name="blah2"
+                        onLoad={onLoad}
+                        onChange={onChange}
+                        fontSize={14}
+                        showPrintMargin={true}
+                        showGutter={true}
+                        highlightActiveLine={true}
+                        value={this.state.code}
+                        setOptions={{
+                            enableBasicAutocompletion: true,
+                            enableLiveAutocompletion: true,
+                            enableSnippets: false,
+                            showLineNumbers: true,
+                            tabSize: 2,
+                        }} />
+                    <br />
+                    <TextField
+                        id="full-width"
+                        label="Send to:"
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        placeholder="codeshare@example.com"
+                        helperText="Happy Hacking!"
+                        fullWidth
+                        margin="normal"
+                        onChange={this.onTextFIeldChange}
+                        error={this.state.isError} />
+                </div>
+                <Button
+                    color="secondary"
+                    onClick={this.onMailClick}
+                    className={classes.button}>
                     Send
                 </Button>
-        </MuiThemeProvider>
-    );
-}
 
-const postCodeEmail = () => {
-    axios.post('http://bobbysapps.com:8080/', {
-      code: this.state.code, 
-      toEmail: this.state.email
-    })
-    .then(function (response) {
-      console.log(response);
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-  }
+                <Snackbar
+                    anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'center',
+                    }}
+                    open={this.state.open}
+                    autoHideDuration={6000}
+                    onClose={this.handleClose}
+                    ContentProps={{
+                        'aria-describedby': 'message-id',
+                    }}
+                    message={<span id="message-id">Sent Email</span>}
+                />
+
+                <Snackbar
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'center',
+                    }}
+                    open={this.state.openError}
+                    autoHideDuration={6000}
+                    onClose={this.handleClose}
+                    ContentProps={{
+                        'aria-describedby': 'message-id',
+                    }}
+                    message={<span id="message-id">Bad Email</span>}
+                    action={[
+                        <Button key="Dismiss" color="secondary" size="small" onClick={this.handleClose}>
+                            Dismiss
+                    </Button>,
+                        <IconButton
+                            key="close"
+                            aria-label="Close"
+                            color="inherit"
+                            className={classes.close}
+                            onClick={this.handleClose}
+                        >
+                        </IconButton>,
+                    ]}
+                />
+            </MuiThemeProvider>
+        );
+    }
+}
 
 Ace.propTypes = {
     classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(Ace);
+export default withStyles(this.styles)(Ace);
