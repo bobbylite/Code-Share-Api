@@ -15,7 +15,6 @@ export class NodeMailerService {
     }
 
     public static SendEmail(email: IEmail) {
-        console.log("Hi!");
         let transporter = nodemailer.createTransport({
             service: "Gmail",
             auth: {
@@ -28,7 +27,7 @@ export class NodeMailerService {
             from: email.from.toString(),
             to: email.to.toString(),
             subject: email.subject.toString(),
-            html: email.body
+            html: email.body.toString()
         };
 
         transporter.sendMail(mailOptions, (error, info) => {

@@ -11,6 +11,7 @@ import TextField from '@material-ui/core/TextField';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import Slide from '@material-ui/core/Slide';
+import * as xmlserializer from "xmlserializer";
 
 import 'brace/mode/typescript';
 import 'brace/theme/kuroir';
@@ -32,6 +33,11 @@ function TransitionDown(props) {
 }
 
 class Ace extends React.Component {
+
+    constructor(props) { 
+        super(props);
+        this.aceRef = React.createRef();
+    }
 
     styles = theme => ({
         root: {
@@ -72,8 +78,9 @@ class Ace extends React.Component {
 
             return;
         }
-        axios.post('http://bobbysapps.com:8080/', {
-            code: this.state.code,
+        // axios.post('http://bobbysapps.com:8080/', {
+        axios.post('http://127.0.0.1:8080/', {
+            code: xmlserializer.serializeToString(this.state.code),
             toEmail: this.state.email
         })
             .then(function (response) {
@@ -98,6 +105,7 @@ class Ace extends React.Component {
 
     onTextFIeldChange = (event) => {
         let status;
+        if (event.target.value.includes("\\n") || event.target.value.includes("\r")) console.log("newline");
         if (!event.target.value.includes('\@') || !event.target.value.includes('.')) status = true;
         this.setState({
             ["email"]: event.target.value,
@@ -110,8 +118,9 @@ class Ace extends React.Component {
         const { classes } = this.props;
 
         const onChange = (newValue) => {
-            this.state.code = newValue;
+            this.state.code = this.aceRef.current;
             console.log(this.state.code);
+            console.log(this.aceRef.current);
         }
 
         const onLoad = (params) => {
@@ -122,6 +131,7 @@ class Ace extends React.Component {
             <MuiThemeProvider theme={this.theme}>
                 <div className="ace">
                     <br />
+                    <div ref={this.aceRef}>
                     <AceEditor
                         mode="typescript"
                         theme="kuroir"
@@ -141,6 +151,7 @@ class Ace extends React.Component {
                             tabSize: 2,
                         }} />
                     <br />
+                    </div>
                     <TextField
                         id="full-width"
                         label="Send to:"

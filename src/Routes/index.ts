@@ -132,11 +132,10 @@ export class IndexRoute extends BaseRoute {
   }
 
   private static getEmail(req: Request): IEmail {
-    //console.log(req.body.code);
     return {
       id: 1, 
       subject: "Hack N' Mail - Development", 
-      body: req.body.code.toString(), 
+      body: req.body.code, 
       to: req.body.toEmail.toString(),
       from: 'CodeShare <CodeShare@HackNMail.com>'
     }
