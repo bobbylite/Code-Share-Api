@@ -20,7 +20,7 @@ export class BaseRoute {
    */
   constructor() {
     //initialize variables
-    this.title = "";
+    this.title = "Counter";
     this.scripts = [];
   }
 
