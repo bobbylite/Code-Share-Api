@@ -16,7 +16,7 @@ export class NodeMailerService implements INodeMailerService {
         try {
             EmailListener.on((email: IEmail)=>NodeMailerService.SendEmail(email));
         } catch(err) {
-            console.log("Error: ");
+            console.log("Error: %s", err.Message);
         }
     }
 
