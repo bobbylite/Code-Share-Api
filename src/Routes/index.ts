@@ -54,8 +54,8 @@ export class IndexRoute extends BaseRoute {
 
     // Resolve an instance of EventHandler with type IEmailRepository
     builder.get<IEvent<IEmailRepository>>(TYPES.IEmailEventHandler).on((repo: IEmailRepository)=>console.log(repo));
-    builder.get<IEvent<IEmail>>(TYPES.IEmail)
-    .on((email: IEmail)=>NodeMailerService.SendEmail(email));
+    //builder.get<IEvent<IEmail>>(TYPES.IEmail)
+    //.on((email: IEmail)=>NodeMailerService.SendEmail(email));
   }
 
   /**
@@ -77,16 +77,17 @@ export class IndexRoute extends BaseRoute {
     // Ask for the email service
     let emailService = builder.get<IEmailService>(TYPES.IEmailService);
 
-    let email = this.getEmail(req);
+    let email: IEmail = this.formatEmailRequest(req);
 
     // set the service's repository to the email repository.
     emailService.set(emailRepo);
-    emailService.add(email);
-
-    builder.get<IEvent<IEmail>>(TYPES.IEmail).emit(email);
+    emailService.add(email); 
 
     // debug log
     builder.get<IEvent<IEmailRepository>>(TYPES.IEmailEventHandler).emit(emailRepo);
+
+    // Emit email event
+    this.sendEmail(req);
 
     //set message
     let options: Object = {
@@ -131,7 +132,12 @@ export class IndexRoute extends BaseRoute {
     this.render(req, res, "index", options);
   }
 
-  private static getEmail(req: Request): IEmail {
+  private static sendEmail(req: Request): void {
+    let email = this.formatEmailRequest(req);
+    builder.get<IEvent<IEmail>>(TYPES.IEmail).emit(email);
+  }
+
+  private static formatEmailRequest(req: Request): IEmail {
     return {
       id: 1, 
       subject: "Hack N' Mail - Development", 

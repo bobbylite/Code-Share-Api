@@ -1,17 +1,23 @@
 import { IEmail } from "../../Infrastructure/Types/IEmail";
 import * as nodemailer from "nodemailer";
-import { IEvent } from "../../Infrastructure/Types/Events/IEvent";
-import { IEmailRepository } from "../../Infrastructure/Types/IEmailRepository";
 import TYPES from "../../Infrastructure/DependencyInjection/Identifiers";
-import builder from "../../Infrastructure/DependencyInjection/Container";
 import { inject, injectable } from "../../../node_modules/inversify";
+import { INodeMailerService } from "../../Infrastructure/Types/nodemailer/INodeMailerService";
+import { IEvent } from "../../Infrastructure/Types/Events/IEvent";
 
 @injectable()
-export class NodeMailerService { 
+export class NodeMailerService implements INodeMailerService { 
+    
     /**
      * Register event listener.
+     * @constructor Inject listener
      */
-    constructor(@inject(TYPES.INodeMailerService) private inversify?: any) {
+    public constructor(@inject(TYPES.IEmail) public EmailListener: IEvent<IEmail>) {
+        try {
+            EmailListener.on((email: IEmail)=>NodeMailerService.SendEmail(email));
+        } catch(err) {
+            console.log("Error: ");
+        }
     }
 
     public static SendEmail(email: IEmail) {

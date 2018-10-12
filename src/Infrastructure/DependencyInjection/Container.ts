@@ -9,7 +9,7 @@ import { IEvent } from "../Types/Events/IEvent";
 import { EventHandler } from "../../App/Handlers/EventHandler";
 import { IEmail } from "../Types/IEmail";
 import { INodeMailerService } from "../Types/nodemailer/INodeMailerService";
-import { NodeMailerService } from "../../../dist/App/Services/NodeMailerService";
+import { NodeMailerService } from "../../App/Services/NodeMailerService";
 
 
 let builder: Container = new Container();
@@ -17,10 +17,24 @@ let builder: Container = new Container();
 /**
  * Dependency Injection
  */
+
+ /**
+  * Binding infrastructure
+  */
 builder.bind<IEmailRepository>(TYPES.IEmailRepository).toConstantValue(new EmailRepository);
-builder.bind<IEmailService>(TYPES.IEmailService).toConstantValue(new EmailRepositoryService);
+
+/**
+ * Binding events
+ */
 builder.bind<IEvent<IEmailRepository>>(TYPES.IEmailEventHandler).toConstantValue(new EventHandler);
 builder.bind<IEvent<IEmail>>(TYPES.IEmail).toConstantValue(new EventHandler);
-builder.bind<INodeMailerService>(TYPES.INodeMailerService).toConstantValue(new NodeMailerService);
+
+/**
+ * Binding services
+ */
+builder.bind<IEmailService>(TYPES.IEmailService)
+.toConstantValue(new EmailRepositoryService);
+builder.bind<INodeMailerService>(TYPES.INodeMailerService)
+.toConstantValue(new NodeMailerService(builder.get<IEvent<IEmail>>(TYPES.IEmail)));
 
 export default builder;
