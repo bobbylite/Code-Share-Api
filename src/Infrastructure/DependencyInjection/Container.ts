@@ -9,7 +9,7 @@ import { IEvent } from "../Types/Events/IEvent";
 import { EventHandler } from "../../App/Handlers/EventHandler";
 import { IEmail } from "../Types/IEmail";
 import { INodeMailerService } from "../Types/nodemailer/INodeMailerService";
-import { NodeMailerService } from "../../../dist/App/Services/NodeMailerService";
+import { NodeMailerService } from "../../App/Services/NodeMailerService";
 
 
 let builder: Container = new Container();
